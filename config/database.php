@@ -57,12 +57,8 @@ class Database {
     }
 }
 
-// Helper functions
+// Helper function
 function db() {
     return Database::getInstance()->getConnection();
-}
-
-function db_prepare($sql) {
-    return Database::getInstance()->prepare($sql);
 }
 ?>
