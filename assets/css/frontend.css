@@ -1,0 +1,311 @@
+/* AutoDealer Frontend Styles */
+
+:root {
+    --primary-color: #1a2332;
+    --secondary-color: #c9a84c;
+    --accent-color: #2c3e50;
+    --text-light: #f8f9fa;
+}
+
+* {
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    padding-top: 0;
+    background: #f8f9fa;
+}
+
+/* Hero Section */
+.hero-section {
+    position: relative;
+    background: linear-gradient(135deg, #1a2332 0%, #2c3e50 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: url('../images/hero-bg.jpg') center/cover no-repeat;
+    opacity: 0.15;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(26, 35, 50, 0.9) 0%, rgba(44, 62, 80, 0.7) 100%);
+}
+
+.hero-section .display-2 {
+    font-weight: 800;
+    line-height: 1.1;
+}
+
+.hero-section .lead {
+    font-size: 1.25rem;
+    opacity: 0.9;
+}
+
+/* Product Cards */
+.product-card {
+    transition: all 0.3s ease;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+}
+
+.product-card .product-image {
+    height: 220px;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.product-card:hover .product-image {
+    transform: scale(1.05);
+}
+
+.product-card .badge {
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+}
+
+/* CTA Section */
+.cta-section {
+    background: linear-gradient(135deg, #1a2332, #2c3e50);
+    position: relative;
+    overflow: hidden;
+}
+
+.cta-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(201, 168, 76, 0.1) 0%, transparent 70%);
+    transform: rotate(45deg);
+}
+
+/* Feature Icons */
+.feature-icon {
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+    line-height: 80px;
+    border-radius: 50%;
+    background: rgba(26, 35, 50, 0.05);
+    transition: all 0.3s ease;
+}
+
+.feature-icon:hover {
+    background: rgba(26, 35, 50, 0.1);
+    transform: scale(1.1);
+}
+
+/* WhatsApp Float */
+.whatsapp-float {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 1000;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #25D366;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.whatsapp-float:hover {
+    transform: scale(1.1);
+    color: #fff;
+    box-shadow: 0 6px 30px rgba(37, 211, 102, 0.6);
+}
+
+/* Navbar */
+.navbar {
+    padding: 1rem 0;
+    background: linear-gradient(135deg, #1a2332, #2c3e50) !important;
+}
+
+.navbar .nav-link {
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link.active {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Buttons */
+.btn-primary {
+    background: var(--secondary-color);
+    border-color: var(--secondary-color);
+    color: #1a2332;
+    font-weight: 600;
+}
+
+.btn-primary:hover {
+    background: #b8972e;
+    border-color: #b8972e;
+    color: #1a2332;
+}
+
+.btn-outline-primary {
+    border-color: var(--secondary-color);
+    color: var(--secondary-color);
+}
+
+.btn-outline-primary:hover {
+    background: var(--secondary-color);
+    border-color: var(--secondary-color);
+    color: #1a2332;
+}
+
+/* Animations */
+[data-aos] {
+    pointer-events: none;
+}
+
+[data-aos].aos-animate {
+    pointer-events: auto;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero-section {
+        min-height: 80vh;
+    }
+    
+    .hero-section .display-2 {
+        font-size: 2.5rem;
+    }
+    
+    .product-card .product-image {
+        height: 180px;
+    }
+    
+    .whatsapp-float {
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+        bottom: 20px;
+        right: 20px;
+    }
+}
+
+/* Admin Sidebar Styles */
+.admin-wrapper {
+    display: flex;
+    margin-top: 56px;
+    min-height: calc(100vh - 56px);
+}
+
+.admin-sidebar {
+    width: 260px;
+    background: #1a2332;
+    min-height: calc(100vh - 56px);
+    position: fixed;
+    top: 56px;
+    left: 0;
+    overflow-y: auto;
+    z-index: 100;
+    transition: all 0.3s ease;
+}
+
+.admin-sidebar .nav-link {
+    color: rgba(255, 255, 255, 0.7);
+    padding: 0.75rem 1.5rem;
+    border-radius: 0;
+    transition: all 0.3s ease;
+}
+
+.admin-sidebar .nav-link:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.admin-sidebar .nav-link.active {
+    color: #fff;
+    background: rgba(201, 168, 76, 0.2);
+    border-right: 3px solid var(--secondary-color);
+}
+
+.admin-sidebar .nav-link i {
+    width: 20px;
+    text-align: center;
+}
+
+.admin-content {
+    margin-left: 260px;
+    padding: 1.5rem;
+    flex: 1;
+    background: #f1f4f8;
+    min-height: calc(100vh - 56px);
+}
+
+/* Admin Stats Cards */
+.stat-card {
+    border-radius: 12px;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card .card-title {
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    opacity: 0.8;
+}
+
+.stat-card h2 {
+    font-weight: 700;
+}
+
+/* Responsive Admin */
+@media (max-width: 768px) {
+    .admin-sidebar {
+        width: 100%;
+        position: relative;
+        top: 0;
+        min-height: auto;
+    }
+    
+    .admin-content {
+        margin-left: 0;
+    }
+    
+    .admin-wrapper {
+        flex-direction: column;
+        margin-top: 0;
+    }
+}
