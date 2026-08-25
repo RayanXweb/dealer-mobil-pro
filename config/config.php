@@ -2,18 +2,19 @@
 // Configuration file
 session_start();
 
-// Error reporting - turn off in production
+// Error reporting - enable for development
 error_reporting(E_ALL);
-ini_set('display_errors', 0);
+ini_set('display_errors', 1);
 ini_set('log_errors', 1);
 ini_set('error_log', __DIR__ . '/../logs/error.log');
 
 // Define base path
 define('BASE_PATH', dirname(__DIR__));
-define('BASE_URL', 'https://' . $_SERVER['HTTP_HOST'] . '/');
+define('BASE_URL', 'http://' . $_SERVER['HTTP_HOST'] . '/autodealer/');
 define('ADMIN_URL', BASE_URL . 'admin/');
 define('ASSETS_URL', BASE_URL . 'assets/');
 define('UPLOADS_URL', BASE_URL . 'uploads/');
+define('UPLOADS_PATH', BASE_PATH . '/uploads/');
 
 // Timezone
 date_default_timezone_set('Asia/Jakarta');
@@ -39,10 +40,10 @@ define('DB_PASS', getenv('DB_PASS') ?: '');
 // Security
 define('SALT', getenv('SALT') ?: 'default_salt_change_this');
 define('CSRF_TOKEN_NAME', 'csrf_token');
-define('SESSION_TIMEOUT', 3600); // 1 hour
+define('SESSION_TIMEOUT', 3600);
 
 // Upload limits
-define('MAX_FILE_SIZE', 5 * 1024 * 1024); // 5MB
+define('MAX_FILE_SIZE', 5 * 1024 * 1024);
 define('ALLOWED_EXTENSIONS', ['jpg', 'jpeg', 'png', 'gif', 'webp']);
 define('ALLOWED_MIME_TYPES', ['image/jpeg', 'image/png', 'image/gif', 'image/webp']);
 
@@ -52,7 +53,7 @@ if (empty($_SESSION[CSRF_TOKEN_NAME])) {
 }
 
 // Auto-include required files
-require_once BASE_PATH . '/includes/database.php';
+require_once BASE_PATH . '/config/database.php';
 require_once BASE_PATH . '/includes/auth.php';
 require_once BASE_PATH . '/includes/functions.php';
 require_once BASE_PATH . '/includes/security.php';
