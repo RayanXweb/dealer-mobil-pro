@@ -1,18 +1,15 @@
 -- ============================================
 -- DATABASE: autodealer
 -- Version: 1.0.0
--- Description: Full database for AutoDealer website
--- Integration: 100% compatible with all PHP files
+-- Full Integration with AutoDealer Project
 -- ============================================
 
--- Drop database if exists (optional - comment out if you want to keep data)
--- DROP DATABASE IF EXISTS autodealer;
-
+DROP DATABASE IF EXISTS autodealer;
 CREATE DATABASE IF NOT EXISTS autodealer;
 USE autodealer;
 
 -- ============================================
--- 1. USERS TABLE
+-- 1. USERS TABLE (First - no foreign keys)
 -- ============================================
 CREATE TABLE IF NOT EXISTS users (
     id INT PRIMARY KEY AUTO_INCREMENT,
@@ -47,7 +44,52 @@ CREATE TABLE IF NOT EXISTS roles (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================
--- 3. BRANDS TABLE
+-- 3. MARKETING TABLE (Before customers - needed for foreign key)
+-- ============================================
+CREATE TABLE IF NOT EXISTS marketing (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    full_name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    phone VARCHAR(20) DEFAULT NULL,
+    target_sales INT DEFAULT 0,
+    commission_rate DECIMAL(5,2) DEFAULT 0,
+    status ENUM('active', 'inactive') DEFAULT 'active',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_email (email),
+    INDEX idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================
+-- 4. CUSTOMERS TABLE (After marketing - foreign key exists)
+-- ============================================
+CREATE TABLE IF NOT EXISTS customers (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT DEFAULT NULL,
+    full_name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    address TEXT DEFAULT NULL,
+    city VARCHAR(50) DEFAULT NULL,
+    province VARCHAR(50) DEFAULT NULL,
+    postal_code VARCHAR(10) DEFAULT NULL,
+    status ENUM('active', 'inactive') DEFAULT 'active',
+    marketing_id INT DEFAULT NULL,
+    source VARCHAR(50) DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
+    FOREIGN KEY (marketing_id) REFERENCES marketing(id) ON DELETE SET NULL,
+    INDEX idx_email (email),
+    INDEX idx_phone (phone),
+    INDEX idx_marketing (marketing_id),
+    INDEX idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================
+-- 5. BRANDS TABLE
 -- ============================================
 CREATE TABLE IF NOT EXISTS brands (
     id INT PRIMARY KEY AUTO_INCREMENT,
@@ -64,7 +106,7 @@ CREATE TABLE IF NOT EXISTS brands (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================
--- 4. PRODUCTS TABLE
+-- 6. PRODUCTS TABLE
 -- ============================================
 CREATE TABLE IF NOT EXISTS products (
     id INT PRIMARY KEY AUTO_INCREMENT,
@@ -101,7 +143,7 @@ CREATE TABLE IF NOT EXISTS products (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================
--- 5. PRODUCT IMAGES TABLE
+-- 7. PRODUCT IMAGES TABLE
 -- ============================================
 CREATE TABLE IF NOT EXISTS product_images (
     id INT PRIMARY KEY AUTO_INCREMENT,
@@ -113,51 +155,6 @@ CREATE TABLE IF NOT EXISTS product_images (
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
     INDEX idx_product (product_id),
     INDEX idx_primary (is_primary)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ============================================
--- 6. CUSTOMERS TABLE
--- ============================================
-CREATE TABLE IF NOT EXISTS customers (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT DEFAULT NULL,
-    full_name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    phone VARCHAR(20) NOT NULL,
-    address TEXT DEFAULT NULL,
-    city VARCHAR(50) DEFAULT NULL,
-    province VARCHAR(50) DEFAULT NULL,
-    postal_code VARCHAR(10) DEFAULT NULL,
-    status ENUM('active', 'inactive') DEFAULT 'active',
-    marketing_id INT DEFAULT NULL,
-    source VARCHAR(50) DEFAULT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
-    FOREIGN KEY (marketing_id) REFERENCES marketing(id) ON DELETE SET NULL,
-    INDEX idx_email (email),
-    INDEX idx_phone (phone),
-    INDEX idx_marketing (marketing_id),
-    INDEX idx_status (status)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ============================================
--- 7. MARKETING TABLE
--- ============================================
-CREATE TABLE IF NOT EXISTS marketing (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT NOT NULL,
-    full_name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    phone VARCHAR(20) DEFAULT NULL,
-    target_sales INT DEFAULT 0,
-    commission_rate DECIMAL(5,2) DEFAULT 0,
-    status ENUM('active', 'inactive') DEFAULT 'active',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    INDEX idx_email (email),
-    INDEX idx_status (status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================
@@ -357,12 +354,6 @@ CREATE TABLE IF NOT EXISTS notifications (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================
--- 19. ADD FOREIGN KEY FOR CUSTOMERS (after marketing table exists)
--- ============================================
--- Note: Foreign key for customers.marketing_id already added in customers table creation
--- This is just a re-verification
-
--- ============================================
 -- INSERT DEFAULT DATA
 -- ============================================
 
@@ -402,7 +393,21 @@ INSERT IGNORE INTO users (
 );
 
 -- ------------------------------------------------------------------------
--- 3. INSERT WEBSITE SETTINGS
+-- 3. INSERT MARKETING
+-- ------------------------------------------------------------------------
+INSERT IGNORE INTO marketing (user_id, full_name, email, phone, target_sales, commission_rate, status) VALUES
+(1, 'Marketing Team', 'marketing@autodealer.com', '081234567899', 100, 5.00, 'active');
+
+-- ------------------------------------------------------------------------
+-- 4. INSERT CUSTOMERS
+-- ------------------------------------------------------------------------
+INSERT IGNORE INTO customers (user_id, full_name, email, phone, address, status, marketing_id, created_at) VALUES
+(NULL, 'Budi Santoso', 'budi@email.com', '081234567891', 'Jl. Melati No. 10, Jakarta', 'active', 1, NOW()),
+(NULL, 'Siti Rahayu', 'siti@email.com', '081234567892', 'Jl. Kenanga No. 5, Bandung', 'active', 1, NOW()),
+(NULL, 'Ahmad Fauzi', 'ahmad@email.com', '081234567893', 'Jl. Mawar No. 20, Surabaya', 'active', 1, NOW());
+
+-- ------------------------------------------------------------------------
+-- 5. INSERT WEBSITE SETTINGS
 -- ------------------------------------------------------------------------
 INSERT IGNORE INTO website_settings (setting_key, setting_value, setting_group, is_public) VALUES
 -- General Settings
@@ -457,7 +462,7 @@ INSERT IGNORE INTO website_settings (setting_key, setting_value, setting_group, 
 ('bank_bni', 'BNI: 1122334455 a.n. AutoDealer', 'payment', 1);
 
 -- ------------------------------------------------------------------------
--- 4. INSERT SAMPLE BRANDS
+-- 6. INSERT BRANDS
 -- ------------------------------------------------------------------------
 INSERT IGNORE INTO brands (name, slug, description, status, sort_order) VALUES
 ('Toyota', 'toyota', 'Toyota Motor Corporation - Japanese automotive manufacturer known for reliability and innovation', 'active', 1),
@@ -472,7 +477,7 @@ INSERT IGNORE INTO brands (name, slug, description, status, sort_order) VALUES
 ('Kia', 'kia', 'Kia Corporation - South Korean automotive manufacturer', 'active', 10);
 
 -- ------------------------------------------------------------------------
--- 5. INSERT SAMPLE PRODUCTS
+-- 7. INSERT PRODUCTS
 -- ------------------------------------------------------------------------
 INSERT IGNORE INTO products (
     brand_id, model, variant, slug, year, price, promo_price, 
@@ -481,118 +486,46 @@ INSERT IGNORE INTO products (
 ) VALUES
 -- Toyota
 (1, 'Avanza', '1.3 E M/T', 'toyota-avanza-1-3-e-mt-2026', 2026, 250000000, 235000000, 0, 'Manual', 'Bensin', 'Silver Metallic', 'Baru', 5, 
- 'Toyota Avanza 1.3 E M/T - Mobil keluarga 7 seater yang nyaman, irit bahan bakar, dan handal untuk segala kondisi jalan. Dilengkapi dengan fitur keselamatan lengkap dan teknologi modern.', 1, 1, 'available'),
+ 'Toyota Avanza 1.3 E M/T - Mobil keluarga 7 seater yang nyaman, irit bahan bakar, dan handal untuk segala kondisi jalan.', 1, 1, 'available'),
 
 (1, 'Innova', '2.0 G A/T', 'toyota-innova-2-0-g-at-2026', 2026, 380000000, 360000000, 0, 'Automatic', 'Bensin', 'White Pearl', 'Baru', 3, 
- 'Toyota Innova 2.0 G A/T - MPV premium dengan desain elegan, kabin luas, dan performa mesin yang tangguh. Cocok untuk perjalanan keluarga dan bisnis.', 1, 0, 'available'),
+ 'Toyota Innova 2.0 G A/T - MPV premium dengan desain elegan, kabin luas, dan performa mesin yang tangguh.', 1, 0, 'available'),
 
 (1, 'Yaris', '1.5 G CVT', 'toyota-yaris-1-5-g-cvt-2026', 2026, 320000000, 0, 0, 'CVT', 'Bensin', 'Red Mica', 'Baru', 4, 
- 'Toyota Yaris 1.5 G CVT - Hatchback sporty dengan desain modern, handling responsif, dan konsumsi bahan bakar efisien. Ideal untuk gaya hidup perkotaan.', 0, 0, 'available'),
+ 'Toyota Yaris 1.5 G CVT - Hatchback sporty dengan desain modern, handling responsif, dan konsumsi bahan bakar efisien.', 0, 0, 'available'),
 
 -- Honda
 (2, 'HR-V', '1.5 E CVT', 'honda-hr-v-1-5-e-cvt-2026', 2026, 350000000, 330000000, 0, 'CVT', 'Bensin', 'Red', 'Baru', 4, 
- 'Honda HR-V 1.5 E CVT - SUV compact dengan desain sporty, kabin premium, dan teknologi canggih. Menawarkan kenyamanan berkendara yang luar biasa.', 1, 1, 'available'),
+ 'Honda HR-V 1.5 E CVT - SUV compact dengan desain sporty, kabin premium, dan teknologi canggih.', 1, 1, 'available'),
 
 (2, 'Civic', '1.8 RS CVT', 'honda-civic-1-8-rs-cvt-2026', 2026, 450000000, 425000000, 0, 'CVT', 'Bensin', 'Black', 'Baru', 2, 
- 'Honda Civic 1.8 RS CVT - Sedan sporty dengan performa tinggi, desain aerodinamis, dan fitur keselamatan mutakhir. Pilihan tepat untuk pecinta kecepatan.', 1, 0, 'available'),
+ 'Honda Civic 1.8 RS CVT - Sedan sporty dengan performa tinggi, desain aerodinamis, dan fitur keselamatan mutakhir.', 1, 0, 'available'),
 
 (2, 'Brio', '1.2 S M/T', 'honda-brio-1-2-s-mt-2026', 2026, 180000000, 170000000, 0, 'Manual', 'Bensin', 'White', 'Baru', 8, 
- 'Honda Brio 1.2 S M/T - City car kompak dengan desain stylish, handling lincah, dan irit bahan bakar. Solusi transportasi perkotaan yang praktis.', 0, 1, 'available'),
+ 'Honda Brio 1.2 S M/T - City car kompak dengan desain stylish, handling lincah, dan irit bahan bakar.', 0, 1, 'available'),
 
 -- Mitsubishi
 (3, 'Xpander', '1.5 A/T', 'mitsubishi-xpander-1-5-at-2026', 2026, 280000000, 265000000, 0, 'Automatic', 'Bensin', 'Blue', 'Baru', 6, 
- 'Mitsubishi Xpander 1.5 A/T - MPV modern dengan desain bold, interior fleksibel, dan performa handal. Pilihan keluarga yang stylish dan fungsional.', 0, 1, 'available'),
-
-(3, 'Pajero Sport', '2.4 A/T', 'mitsubishi-pajero-sport-2-4-at-2026', 2026, 550000000, 520000000, 0, 'Automatic', 'Diesel', 'Gray', 'Baru', 2, 
- 'Mitsubishi Pajero Sport 2.4 A/T - SUV premium dengan mesin diesel bertenaga, pengendaraan off-road yang mumpuni, dan kabin mewah. Untuk petualangan sejati.', 0, 0, 'available'),
+ 'Mitsubishi Xpander 1.5 A/T - MPV modern dengan desain bold, interior fleksibel, dan performa handal.', 0, 1, 'available'),
 
 -- Suzuki
 (4, 'Ertiga', '1.5 A/T', 'suzuki-ertiga-1-5-at-2026', 2026, 230000000, 0, 0, 'Automatic', 'Bensin', 'Silver', 'Baru', 5, 
- 'Suzuki Ertiga 1.5 A/T - MPV 7 seater yang irit, nyaman, dan praktis. Dilengkapi dengan fitur keselamatan dan hiburan untuk keluarga.', 0, 0, 'available'),
+ 'Suzuki Ertiga 1.5 A/T - MPV 7 seater yang irit, nyaman, dan praktis untuk keluarga.', 0, 0, 'available'),
 
 -- Daihatsu
 (5, 'Ayla', '1.0 M/T', 'daihatsu-ayla-1-0-mt-2026', 2026, 150000000, 0, 0, 'Manual', 'Bensin', 'White', 'Baru', 8, 
- 'Daihatsu Ayla 1.0 M/T - City car kompak dengan desain cute, efisiensi bahan bakar tinggi, dan harga terjangkau. Pilihan cerdas untuk pemula dan urban.', 0, 0, 'available'),
-
-(5, 'Terios', '1.5 R A/T', 'daihatsu-terios-1-5-r-at-2026', 2026, 270000000, 250000000, 0, 'Automatic', 'Bensin', 'Black', 'Baru', 4, 
- 'Daihatsu Terios 1.5 R A/T - SUV compact dengan ground clearance tinggi, performa tangguh, dan desain yang gagah. Siap menemani petualangan Anda.', 0, 1, 'available'),
+ 'Daihatsu Ayla 1.0 M/T - City car kompak dengan desain cute, efisiensi bahan bakar tinggi, dan harga terjangkau.', 0, 0, 'available'),
 
 -- BMW
 (8, 'X5', 'xDrive40i', 'bmw-x5-xdrive40i-2026', 2026, 2500000000, 2350000000, 0, 'Automatic', 'Bensin', 'Black Sapphire', 'Baru', 2, 
- 'BMW X5 xDrive40i - SUV mewah dengan mesin 3.0L turbo, sistem penggerak all-wheel drive, dan interior premium. Kemewahan dan performa dalam satu paket.', 1, 0, 'available');
-
--- ------------------------------------------------------------------------
--- 6. INSERT SAMPLE PRODUCT IMAGES (will be used as examples)
--- ------------------------------------------------------------------------
--- Note: Actual images need to be uploaded separately
--- These are placeholder records for the structure
-INSERT IGNORE INTO product_images (product_id, image_path, is_primary, sort_order) VALUES
-(1, 'sample-avanza-1.jpg', 1, 0),
-(1, 'sample-avanza-2.jpg', 0, 1),
-(4, 'sample-hrv-1.jpg', 1, 0),
-(5, 'sample-civic-1.jpg', 1, 0),
-(7, 'sample-xpander-1.jpg', 1, 0);
-
--- ------------------------------------------------------------------------
--- 7. INSERT SAMPLE CUSTOMER
--- ------------------------------------------------------------------------
-INSERT IGNORE INTO customers (full_name, email, phone, address, status, created_at) VALUES
-('Budi Santoso', 'budi@email.com', '081234567891', 'Jl. Melati No. 10, Jakarta', 'active', NOW()),
-('Siti Rahayu', 'siti@email.com', '081234567892', 'Jl. Kenanga No. 5, Bandung', 'active', NOW()),
-('Ahmad Fauzi', 'ahmad@email.com', '081234567893', 'Jl. Mawar No. 20, Surabaya', 'active', NOW());
-
--- ------------------------------------------------------------------------
--- 8. INSERT SAMPLE MARKETING
--- ------------------------------------------------------------------------
-INSERT IGNORE INTO marketing (user_id, full_name, email, phone, target_sales, commission_rate, status) VALUES
-(1, 'Marketing Team', 'marketing@autodealer.com', '081234567899', 100, 5.00, 'active');
-
--- ------------------------------------------------------------------------
--- 9. INSERT SAMPLE ORDERS
--- ------------------------------------------------------------------------
-INSERT IGNORE INTO orders (order_number, customer_id, marketing_id, total_amount, discount, final_amount, payment_method, status, order_date) VALUES
-('ORD-20260825-0001', 1, 1, 250000000, 15000000, 235000000, 'cash', 'completed', '2026-08-25 10:00:00'),
-('ORD-20260826-0002', 2, 1, 350000000, 20000000, 330000000, 'transfer', 'verified', '2026-08-26 14:30:00'),
-('ORD-20260827-0003', 3, 1, 280000000, 15000000, 265000000, 'credit', 'pending', '2026-08-27 09:15:00');
-
--- ------------------------------------------------------------------------
--- 10. INSERT SAMPLE ORDER ITEMS
--- ------------------------------------------------------------------------
-INSERT IGNORE INTO order_items (order_id, product_id, quantity, price) VALUES
-(1, 1, 1, 235000000),
-(2, 4, 1, 330000000),
-(3, 7, 1, 265000000);
-
--- ------------------------------------------------------------------------
--- 11. INSERT SAMPLE TRANSACTIONS
--- ------------------------------------------------------------------------
-INSERT IGNORE INTO transactions (transaction_number, order_id, customer_id, amount, payment_method, payment_status, transaction_date) VALUES
-('TRX-20260825-0001', 1, 1, 235000000, 'cash', 'completed', '2026-08-25 10:30:00'),
-('TRX-20260826-0002', 2, 2, 330000000, 'bank_transfer', 'paid', '2026-08-26 15:00:00');
-
--- ------------------------------------------------------------------------
--- 12. INSERT SAMPLE OFFERS
--- ------------------------------------------------------------------------
-INSERT IGNORE INTO offers (offer_number, customer_id, product_id, marketing_id, price, discount, final_price, status, valid_until) VALUES
-('OFF-20260825-0001', 1, 2, 1, 380000000, 20000000, 360000000, 'sent', DATE_ADD(NOW(), INTERVAL 7 DAY)),
-('OFF-20260826-0002', 2, 5, 1, 450000000, 25000000, 425000000, 'accepted', DATE_ADD(NOW(), INTERVAL 7 DAY));
+ 'BMW X5 xDrive40i - SUV mewah dengan mesin 3.0L turbo, sistem penggerak all-wheel drive, dan interior premium.', 1, 0, 'available');
 
 -- ============================================
 -- VERIFICATION QUERIES
 -- ============================================
-
--- Check admin user
 -- SELECT * FROM users WHERE username = 'admindeveloper';
-
--- Check admin user with password verification
--- SELECT id, username, email, password, role, status 
--- FROM users WHERE username = 'admindeveloper';
--- Expected: 1 row with role='owner', status='active'
-
--- Check website settings
--- SELECT setting_key, setting_value FROM website_settings WHERE is_public = 1;
-
--- Check all tables
+-- SELECT * FROM customers;
+-- SELECT * FROM products;
 -- SHOW TABLES;
 
 -- ============================================
