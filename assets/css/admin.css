@@ -1,0 +1,313 @@
+/* AutoDealer Admin Styles */
+
+:root {
+    --admin-primary: #1a2332;
+    --admin-secondary: #c9a84c;
+    --admin-bg: #f1f4f8;
+    --admin-text: #2c3e50;
+}
+
+/* Admin Layout */
+.admin-wrapper {
+    display: flex;
+    min-height: calc(100vh - 56px);
+    margin-top: 56px;
+}
+
+.admin-sidebar {
+    width: 260px;
+    background: var(--admin-primary);
+    min-height: calc(100vh - 56px);
+    position: fixed;
+    top: 56px;
+    left: 0;
+    overflow-y: auto;
+    z-index: 100;
+    transition: all 0.3s ease;
+}
+
+.admin-sidebar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.admin-sidebar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb {
+    background: var(--admin-secondary);
+    border-radius: 4px;
+}
+
+.admin-sidebar .sidebar-user {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
+}
+
+.admin-sidebar .avatar-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 20px;
+}
+
+.admin-sidebar .nav {
+    padding: 0.5rem 0;
+}
+
+.admin-sidebar .nav-link {
+    color: rgba(255, 255, 255, 0.7);
+    padding: 0.75rem 1.5rem;
+    border-radius: 0;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.admin-sidebar .nav-link:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.admin-sidebar .nav-link.active {
+    color: #fff;
+    background: rgba(201, 168, 76, 0.15);
+    border-right: 3px solid var(--admin-secondary);
+}
+
+.admin-sidebar .nav-link i {
+    width: 22px;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.admin-sidebar .nav-link .float-end {
+    font-size: 0.7rem;
+    opacity: 0.5;
+}
+
+.admin-sidebar .collapse .nav-link {
+    padding-left: 3rem;
+    font-size: 0.85rem;
+}
+
+.admin-content {
+    margin-left: 260px;
+    padding: 1.5rem;
+    flex: 1;
+    background: var(--admin-bg);
+    min-height: calc(100vh - 56px);
+}
+
+/* Admin Cards */
+.admin-content .card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.admin-content .card:hover {
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+.admin-content .card-header {
+    background: transparent;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 1rem 1.5rem;
+    font-weight: 600;
+}
+
+/* Admin Stats Cards */
+.stat-card {
+    border-radius: 12px;
+    border: none;
+    transition: all 0.3s ease;
+    cursor: default;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card .card-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    opacity: 0.8;
+    font-weight: 600;
+}
+
+.stat-card h2 {
+    font-weight: 700;
+    font-size: 2rem;
+}
+
+/* Admin Tables */
+.admin-content .table {
+    margin-bottom: 0;
+}
+
+.admin-content .table th {
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6c757d;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.admin-content .table td {
+    vertical-align: middle;
+    font-size: 0.9rem;
+}
+
+.admin-content .table-hover tbody tr:hover {
+    background: rgba(201, 168, 76, 0.04);
+}
+
+/* Admin Forms */
+.admin-content .form-control,
+.admin-content .form-select {
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    font-size: 0.9rem;
+    padding: 0.6rem 1rem;
+}
+
+.admin-content .form-control:focus,
+.admin-content .form-select:focus {
+    border-color: var(--admin-secondary);
+    box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.1);
+}
+
+/* Admin Buttons */
+.admin-content .btn {
+    border-radius: 8px;
+    font-weight: 500;
+    padding: 0.5rem 1.25rem;
+    font-size: 0.9rem;
+}
+
+.admin-content .btn-primary {
+    background: var(--admin-secondary);
+    border-color: var(--admin-secondary);
+    color: #1a2332;
+}
+
+.admin-content .btn-primary:hover {
+    background: #b8972e;
+    border-color: #b8972e;
+    color: #1a2332;
+}
+
+/* Badge */
+.admin-content .badge {
+    font-weight: 500;
+    padding: 0.35rem 0.7rem;
+}
+
+/* Chart Containers */
+.chart-container {
+    position: relative;
+    min-height: 200px;
+}
+
+/* Responsive Admin */
+@media (max-width: 992px) {
+    .admin-sidebar {
+        width: 220px;
+    }
+    
+    .admin-content {
+        margin-left: 220px;
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-sidebar {
+        width: 100%;
+        position: relative;
+        top: 0;
+        min-height: auto;
+        height: auto;
+    }
+    
+    .admin-content {
+        margin-left: 0;
+        padding: 1rem;
+    }
+    
+    .admin-wrapper {
+        flex-direction: column;
+        margin-top: 0;
+    }
+    
+    .admin-content .stat-card h2 {
+        font-size: 1.5rem;
+    }
+    
+    .admin-content .card {
+        border-radius: 8px;
+    }
+}
+
+/* Dark Mode Sidebar Toggle */
+.admin-sidebar .nav-link .badge {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+}
+
+/* Admin Pagination */
+.admin-content .pagination .page-link {
+    border-radius: 8px;
+    margin: 0 2px;
+    border: none;
+    color: var(--admin-text);
+}
+
+.admin-content .pagination .page-item.active .page-link {
+    background: var(--admin-secondary);
+    color: #1a2332;
+}
+
+/* Admin Modal */
+.admin-content .modal-content {
+    border-radius: 12px;
+    border: none;
+}
+
+.admin-content .modal-header {
+    border-bottom: 1px solid #e9ecef;
+    padding: 1.25rem 1.5rem;
+}
+
+.admin-content .modal-footer {
+    border-top: 1px solid #e9ecef;
+    padding: 1.25rem 1.5rem;
+}
+
+/* Admin Toast */
+.toast-container {
+    z-index: 9999;
+}
+
+/* Admin Loading Spinner */
+.admin-loading {
+    display: inline-block;
+    width: 1.2rem;
+    height: 1.2rem;
+    border: 2px solid #e9ecef;
+    border-top-color: var(--admin-secondary);
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
